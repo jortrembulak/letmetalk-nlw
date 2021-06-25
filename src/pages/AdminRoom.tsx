@@ -2,6 +2,8 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import logoImg from '../assets/images/logo.svg';
 import deleteImg from '../assets/images/delete.svg';
+import checkImg from '../assets/images/check.svg';
+import answerImg from '../assets/images/answer.svg';
 
 import { Button } from '../components/Button';
 import { Question } from '../components/Question';
@@ -39,6 +41,18 @@ export function AdminRoom() {
     }
   }
 
+  async function handleCheckQuestionAsAnswared(questionId: string) {
+    await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+      isAnswered: true,
+    });
+  }
+
+  async function handleHighLightQuestion(questionId: string) {
+    await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+      isHighlighted: true,
+    });
+  }
+
   return (
     <div id='page-room'>
       <header>
@@ -67,7 +81,29 @@ export function AdminRoom() {
                 author={question.author}
                 likeCount={question.likeCount}
                 likeId={question.likeId}
+                isAnswered={question.isAnswered}
+                isHighlighted={question.isHighlighted}
               >
+                {!question.isAnswered && (
+                  <>
+                    <button
+                      type='button'
+                      onClick={() => {
+                        handleHighLightQuestion(question.id);
+                      }}
+                    >
+                      <img src={checkImg} alt='Dar destaque a pergunta' />
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() => {
+                        handleCheckQuestionAsAnswared(question.id);
+                      }}
+                    >
+                      <img src={answerImg} alt='Responder a Pergunta' />
+                    </button>
+                  </>
+                )}
                 <button
                   type='button'
                   onClick={() => {
